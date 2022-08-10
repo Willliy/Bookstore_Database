@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Book Chatroom</title>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-social.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="Navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"></span> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/forum"><span class="fa fa-list fa-lg"></span> Rooms</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row row-content">
+            <div class="col-10 offset-1">
+                <h3>Chatroom for <%= book.title %></h3>
+            </div>
+            <div class="col-6 offset-2">
+                <form id="enterForm">
+                    <div class="form-group row justify-content-center">
+                        <label for="username" class="col-md-2 col-form-label">Username: </label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Please enter your name" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group row justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-sm ml-4">Join</button>
+                        <button type="button" id="leave" class="btn btn-secondary btn-sm ml-4">Leave</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-8 offset-1">
+                <p>Messages:</p>
+                <div class="row justify-content-center">
+                    <ul id="messages" class="col-10"></ul>
+                    <form id="sendForm" action="" class="offset-1 col-6">
+                        <div class="form-group row justify-content-center">
+                            <input id="input" class="form-control" autocomplete="off" placeholder="Please enter your message" />
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <button type="submit" class="btn btn-success btn-sm ml-4">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const socket = io({
+        autoConnect: false
+    });
+    var roomNo = '<%= book.id %>';
+    
+    $('#sendForm').on('submit', function(e) {
+        var input = $('#input');
+        if (input.val()) {
+            socket.emit('message', roomNo, input.val());
+            input.val('');
+        }
+        e.preventDefault();
+    });
+    socket.on('message', function(msg) {
+        var item = $('<li/>').html(msg);
+        var messages = $('#messages');
+        messages.append(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+    $('#enterForm').on('submit', function(e) {
+        var username = $('#username').val();
+        socket.connect();
+        socket.emit('join', username, roomNo);
+        e.preventDefault();
+    });
+    $('#leave').on('click', function(e) {
+        var username = $('#username').val();
+        socket.emit('leave', username, roomNo);
+        socket.disconnect();
+        e.preventDefault();
+    });
+</script>
+</html>

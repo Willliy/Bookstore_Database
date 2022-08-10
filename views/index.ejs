@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Book Store</title>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-social.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="Navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"></span> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/forum"><span class="fa fa-list fa-lg"></span> Rooms</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row row-content">
+            <div class="col-10 offset-1">
+                <h3>Books</h3>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="offset-8">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add Book </button>
+                    </div>
+                </div>
+                <br>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Title</th>
+                            <th>Inventory</th>
+                            <th>Date</th>
+                            <th>Operation</th>
+                            <th>Chatroom</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <% books.forEach(function(book, index) { %>
+                                <tr>
+                                    <td><%= index+1 %></td>
+                                    <td><%= book.title %></td>
+                                    <td><%= book.inventory %></td>
+                                    <td><%= book.date.getFullYear() %>-<%= book.date.getMonth()+1 %>-<%= book.date.getDate() %></td>
+                                    <td>
+                                        <button type="button" class="update btn btn-sm btn-info" data-toggle="modal" data-target="#updateModal" data-id="<%= book.id %>">
+                                            Modify
+                                        </button>
+                                        <button type="button" class="delete btn btn-sm btn-danger" data-id="<%= book.id %>">
+                                            Delete
+                                        </button>
+                                    </td>
+                                    <td><a href="/rooms/<%= book.id %>"><span class="fa fa-external-link"></span></a></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Add Book -->
+            <div id="addModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add Book </h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addForm"  method="post">
+                                <div class="form-group row">
+                                    <label for="title" class="col-md-2 col-form-label">Title: </label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" id="title" name="title" placeholder="Please enter book title" required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inventory" class="col-md-2 col-form-label">Inventory: </label>
+                                    <div class="col-md-10">
+                                        <input type="number" step="1" class="form-control" id="inventory" name="inventory" placeholder="Please enter inventory" required="required">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <button type="button" class="btn btn-secondary btn-sm ml-auto" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary btn-sm ml-1">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Update Book -->
+            <div id="updateModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Modify Book </h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="bookId" value="">
+                            <form id="updateForm"  method="post">
+                                <div class="form-group row">
+                                    <label for="updateTitle" class="col-md-2 col-form-label">Title: </label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" id="updateTitle" name="title" placeholder="Please enter book title" required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="updateInventory" class="col-md-2 col-form-label">Inventory: </label>
+                                    <div class="col-md-10">
+                                        <input type="number" step="1" class="form-control" id="updateInventory" name="inventory" placeholder="Please enter inventory" required="required">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <button type="button" class="btn btn-secondary btn-sm ml-auto" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary btn-sm ml-1">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $('#addForm').on('submit', function(e) {
+        var formData = {
+            title: $("#title").val(),
+            inventory: $("#inventory").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: "/book",
+            data: formData,
+            encode: true,
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+        e.preventDefault();
+    });
+    $('.update').click(function() {
+        var bookId = $(this).data('id');
+        $('#bookId').val(bookId);
+        $("#updateTitle").val('');
+        $("#updateInventory").val('');
+    });
+    
+    $('#updateForm').on('submit', function(e) {
+        var formData = {
+            title: $("#updateTitle").val(),
+            inventory: $("#updateInventory").val()
+        };
+        $.ajax({
+            type: "PUT",
+            url: "/book/" + $('#bookId').val(),
+            data: formData,
+            encode: true,
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+        e.preventDefault();
+    });
+
+    
+    $('.delete').click(function() {
+        var bookId = $(this).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: "/book/" + bookId,
+            success: function (data) {
+                alert(data);
+                location.reload();
+            }
+        });
+    });
+</script>
+</html>
